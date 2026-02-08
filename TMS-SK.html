@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>🚛 Truck Management App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { 
+            text-align: center; 
+            background: rgba(255,255,255,0.95);
+            padding: 20px; 
+            border-radius: 20px; 
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 { color: #1e3c72; margin-bottom: 10px; }
+        .tabs { 
+            display: flex; 
+            background: rgba(255,255,255,0.9); 
+            border-radius: 15px; 
+            padding: 5px; 
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 5px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .tab-btn { 
+            flex: 1; 
+            padding: 15px 10px; 
+            border: none; 
+            background: transparent; 
+            font-weight: bold; 
+            color: #666; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: all 0.3s;
+            min-width: 140px;
+        }
+        .tab-btn.active { 
+            background: linear-gradient(45deg, #00d4ff, #0099cc); 
+            color: white; 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,212,255,0.4);
+        }
+        .tab-content { 
+            background: rgba(255,255,255,0.95); 
+            border-radius: 20px; 
+            padding: 30px; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            display: none;
+        }
+        .tab-content.active { display: block; }
+        h2 { color: #1e3c72; margin-bottom: 20px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 15px 10px; text-align: center; border-bottom: 1px solid #eee; }
+        th { background: linear-gradient(45deg, #1e3c72, #2a5298); color: white; font-weight: bold; }
+        input, input[type="date"], input[type="file"] { 
+            width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; 
+            font-size: 14px; transition: border-color 0.3s;
+        }
+        input:focus, input[type="date"]:focus { border-color: #00d4ff; outline: none; }
+        .add-row { 
+            background: linear-gradient(45deg, #28a745, #20c997); 
+            color: white; 
+            border: none; 
+            padding: 12px 25px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-weight: bold;
+            margin: 10px auto;
+            display: block;
+            transition: all 0.3s;
+        }
+        .add-row:hover { transform: scale(1.05); }
+        .total-row { background: linear-gradient(45deg, #ffc107, #ff8c00); font-weight: bold; font-size: 1.1em; }
+        .files { display: flex; flex-wrap: wrap; gap: 5px; }
+        .file-tag { background: #00d4ff; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px; }
+        @media (max-width: 768px) {
+            .tabs { flex-direction: column; }
+            .tab-btn { min-width: auto; }
+            table { font-size: 12px; }
+            th, td { padding: 8px 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 Complete Truck Management System</h1>
+            <p>Track Tyres • Diesel • Documents • Driver Costs • Maintenance</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(0)">🔧 Tyres</button>
+            <button class="tab-btn" onclick="switchTab(1)">⛽ Diesel</button>
+            <button class="tab-btn" onclick="switchTab(2)">📋 Documents</button>
+            <button class="tab-btn" onclick="switchTab(3)">👨‍💼 Driver</button>
+            <button class="tab-btn" onclick="switchTab(4)">🔧 Maintenance</button>
+        </div>
+
+        <!-- Tab 1: Tyres -->
+        <div id="tab0" class="tab-content active">
+            <h2>🔧 Tyre Management</h2>
+            <table id="tyreTable">
+                <thead>
+                    <tr>
+                        <th>Tyre Brand</th>
+                        <th>Installed KM</th>
+                        <th>Removed KM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><select><option>Apollo</option><option>MRF</option><option>CEAT</option><option>Bridgestone</option></select></td>
+                           <td><input type="number" oninput="checkTyreRow(this)"></td>
+                           <td><input type="number" oninput="checkTyreRow(this)"></td></tr>
+                </tbody>
+            </table>
+            <button class="add-row" onclick="addTyreRow()">+ Add Tyre</button>
+        </div>
+
+        <!-- Tab 2: Diesel -->
+        <div id="tab1" class="tab-content">
+            <h2>⛽ Diesel Tracking</h2>
+            <table id="dieselTable">
+                <thead>
+                    <tr><th>Full Tank KM</th><th>Diesel (Ltr)</th><th>Cost (₹)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><input type="number" oninput="checkDieselRow(this)"></td>
+                        <td><input type="number" step="0.1" oninput="checkDieselRow(this)"></td>
+                        <td><input type="number" oninput="checkDieselRow(this)"></td></tr>
+                </tbody>
+            </table>
+            <button class="add-row" onclick="addDieselRow()">+ Add Entry</button>
+        </div>
+
+        <!-- Tab 3: Documents -->
+        <div id="tab2" class="tab-content">
+            <h2>📋 Document Tracking</h2>
+            <table id="docTable">
+                <thead>
+                    <tr><th>Document</th><th>Start Date</th><th>End Date</th><th>Files</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><select><option>PUC</option><option>Insurance</option><option>Permit</option><option>National Permit</option>
+                               <option>Fitness Certificate</option><option>Road Tax</option><option>Registration</option><option>Fastag</option></select></td>
+                        <td><input type="date"></td><td><input type="date"></td><td><input type="file" multiple onchange="handleFiles(this)"></td></tr>
+                </tbody>
+            </table>
+            <button class="add-row" onclick="addDocRow()">+ Add Document</button>
+        </div>
+
+        <!-- Tab 4: Driver -->
+        <div id="tab3" class="tab-content">
+            <h2>👨‍💼 Driver Monthly Costs</h2>
+            <table id="driverTable">
+                <thead><tr><th>Cost 2026</th></tr></thead>
+                <tbody>
+                    <tr><td><input type="number" placeholder="Jan 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Feb 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Mar 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Apr 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="May 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Jun 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Jul 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Aug 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Sep 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Oct 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Nov 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr><td><input type="number" placeholder="Dec 2026" oninput="updateDriverTotal()"></td></tr>
+                    <tr class="total-row"><td id="driverTotal">Total Year: ₹0</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tab 5: Maintenance -->
+        <div id="tab4" class="tab-content">
+            <h2>🔧 Maintenance Tracking</h2>
+            <table id="maintTable">
+                <thead>
+                    <tr><th>Trips</th><th>Total KM</th><th>Diesel Used</th><th>Other Expenses</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><input type="number" oninput="checkMaintRow(this)"></td>
+                        <td><input type="number" oninput="checkMaintRow(this)"></td>
+                        <td><input type="number" step="0.1" oninput="checkMaintRow(this)"></td>
+                        <td><input type="number" oninput="checkMaintRow(this)"></td></tr>
+                </tbody>
+            </table>
+            <button class="add-row" onclick="addMaintRow()">+ Add Trip</button>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 0;
+        let fileData = {};
+
+        function switchTab(tabIndex) {
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === tabIndex));
+            document.querySelectorAll('.tab-content').forEach((content, i) => content.classList.toggle('active', i === tabIndex));
+            currentTab = tabIndex;
+        }
+
+        // Tyre Management
+        function checkTyreRow(input) {
+            const row = input.closest('tr');
+            const removedKm = row.querySelectorAll('input')[1].value;
+            if (removedKm) addTyreRow();
+        }
+        function addTyreRow() {
+            const tbody = document.querySelector('#tyreTable tbody');
+            const row = tbody.insertRow();
+            row.innerHTML = `<td><select><option>Apollo</option><option>MRF</option><option>CEAT</option><option>Bridgestone</option></select></td>
+                           <td><input type="number" oninput="checkTyreRow(this)"></td>
+                           <td><input type="number" oninput="checkTyreRow(this)"></td>`;
+        }
+
+        // Diesel Tracking
+        function checkDieselRow(input) {
+            const row = input.closest('tr');
+            const values = Array.from(row.querySelectorAll('input')).every(inp => inp.value);
+            if (values) addDieselRow();
+        }
+        function addDieselRow() {
+            const tbody = document.querySelector('#dieselTable tbody');
+            const row = tbody.insertRow();
+            row.innerHTML = `<td><input type="number" oninput="checkDieselRow(this)"></td>
+                           <td><input type="number" step="0.1" oninput="checkDieselRow(this)"></td>
+                           <td><input type="number" oninput="checkDieselRow(this)"></td>`;
+        }
+
+        // Document Files
+        function handleFiles(input) {
+            const row = input.closest('tr');
+            const filesCell = row.cells[3];
+            Array.from(input.files).forEach(file => {
+                const fileTag = document.createElement('div');
+                fileTag.className = 'file-tag';
+                fileTag.textContent = file.name;
+                filesCell.appendChild(fileTag);
+                fileData[file.name] = file;
+            });
+        }
+        function addDocRow() {
+            const tbody = document.querySelector('#docTable tbody');
+            const row = tbody.insertRow();
+            row.innerHTML = `<td><select><option>New Document</option></select></td>
+                           <td><input type="date"></td><td><input type="date"></td><td><input type="file" multiple onchange="handleFiles(this)"></td>`;
+        }
+
+        // Driver Costs
+        function updateDriverTotal() {
+            const inputs = document.querySelectorAll('#driverTable input[type="number"]');
+            const total = Array.from(inputs).reduce((sum, inp) => sum + (parseFloat(inp.value) || 0), 0);
+            document.getElementById('driverTotal').textContent = `Total Year: ₹${total.toLocaleString()}`;
+        }
+
+        // Maintenance
+        function checkMaintRow(input) {
+            const row = input.closest('tr');
+            const values = Array.from(row.querySelectorAll('input')).every(inp => inp.value);
+            if (values) addMaintRow();
+        }
+        function addMaintRow() {
+            const tbody = document.querySelector('#maintTable tbody');
+            const row = tbody.insertRow();
+            row.innerHTML = `<td><input type="number" oninput="checkMaintRow(this)"></td>
+                           <td><input type="number" oninput="checkMaintRow(this)"></td>
+                           <td><input type="number" step="0.1" oninput="checkMaintRow(this)"></td>
+                           <td><input type="number" oninput="checkMaintRow(this)"></td>`;
+        }
+
+        // Auto-save
+        window.onbeforeunload = () => localStorage.setItem('truckData', JSON.stringify({
+            tyres: document.querySelector('#tyreTable').outerHTML,
+            diesel: document.querySelector('#dieselTable').outerHTML,
+            docs: document.querySelector('#docTable').outerHTML,
+            driver: document.querySelector('#driverTable').outerHTML,
+            maint: document.querySelector('#maintTable').outerHTML
+        }));
+    </script>
+</body>
+</html>
